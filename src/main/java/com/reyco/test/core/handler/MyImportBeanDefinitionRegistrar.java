@@ -12,10 +12,9 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import com.reyco.test.core.TestApplication;
 
-
 public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar{
 	
-	private static volatile List<String> beanDefinitions =  new Vector<String>();
+	private static List<String> beanDefinitions =  new Vector<String>();
 	
 	public MyImportBeanDefinitionRegistrar() {
 		initBeanDefinitions();
@@ -24,14 +23,41 @@ public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegi
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 		for (String bean : beanDefinitions) {
-			BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MyMapperFactoryBean.class);
+			BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperFactoryBean.class);
 			BeanDefinition beanDefinition = builder.getBeanDefinition();
 			beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(bean);
-			//beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(UserDao.class);
 			registry.registerBeanDefinition(getBeanName(bean), beanDefinition);
 		}
 	}
 	
+	/**
+	 * 扫描指定包下的。class文件
+	 */
+	private void initBeanDefinitions(){
+		String[] packagePaths = TestApplication.class.getAnnotation(MapperScan.class).value();
+		for (String packagePath : packagePaths) {
+			initBeanDefinitions(packagePath);
+		}
+	}
+	/**
+	 * 扫描指定包下的。class文件
+	 * @param packagePath
+	 */
+	private void initBeanDefinitions(String packagePath){
+		String rootPath = this.getClass().getResource("/").getPath();
+        String targetPackagePath = rootPath + packagePath.replace(".","/");
+        File file = new File(targetPackagePath);
+        File[] fileList = file.listFiles();
+        for (File wjFile:fileList) {
+            if (wjFile.isFile()) {//判断是否为文件
+                String targetClass = packagePath+"."+wjFile.getName().replace(".class","");
+                if (beanDefinitions==null) {
+                	beanDefinitions = new Vector<String>();
+                }
+                beanDefinitions.add(targetClass);
+            }
+        }
+	}
 	/**
 	 * 根据类全名获取bean的名称
 	 * 
@@ -46,31 +72,6 @@ public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegi
 		bytes[0] = (byte) (bytes[0] + 32);
 		// bytes字节数组转String
 		return new String(bytes);
-			
 	}
-	private void initBeanDefinitions(){
-		String[] packagePaths = TestApplication.class.getAnnotation(MyMapperScan.class).value();
-		for (String packagePath : packagePaths) {
-			getBeanDefinitions(packagePath);
-		}
-	}
-	
-	private void getBeanDefinitions(String packagePath){
-		String rootPath = TestApplication.class.getResource("/").getPath();
-		rootPath = "/D:/application/javaworkspace/springboot/test/target/classes/";
-        String targetPackagePath = rootPath + packagePath.replace(".","/");
-        File file = new File(targetPackagePath);
-        File[] fileList = file.listFiles();
-        for (File wjFile:fileList) {
-            if (wjFile.isFile()) {//判断是否为文件
-                String targetClass = packagePath+"."+wjFile.getName().replace(".class","");
-                if (beanDefinitions==null) {
-                	beanDefinitions = new Vector<String>();
-                }
-                beanDefinitions.add(targetClass);
-            }
-        }
-	}
-	
 
 }

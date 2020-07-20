@@ -13,10 +13,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.reyco.test.core.handler.MyMapperScan;
+import com.reyco.test.core.handler.MapperScan;
 
 @SpringBootApplication
-@MyMapperScan("com.reyco.test.core.dao")
+@MapperScan("com.reyco.test.core.dao")
 public class TestApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TestApplication.class, args);

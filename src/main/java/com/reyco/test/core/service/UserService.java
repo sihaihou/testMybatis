@@ -15,21 +15,22 @@ public class UserService{
 
 	@Autowired
 	private UserDao userDao;
+	
 	@Autowired
 	private ReycoDao reycoDao;
+	
 	@Autowired
 	private RoleDao roleDao;
 	
 	public List<User> queryUser(Integer id) {
-		List<User> daoValue = userDao.query(id);
-		return daoValue;
+		return userDao.query(id);
 	}
+	
 	public List<User> queryOne(Integer id) {
-		List<User> daoValue = reycoDao.query(id);
-		return daoValue;
+		return reycoDao.query(id);
 	}
+	
 	public List<User> queryRole(Integer id) {
-		List<User> daoValue = roleDao.query(id);
-		return daoValue;
+		return roleDao.query(id);
 	}
 }

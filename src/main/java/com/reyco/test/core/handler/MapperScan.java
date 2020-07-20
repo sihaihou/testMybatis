@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Import(MyImportBeanDefinitionRegistrar.class)
-public @interface MyMapperScan {
+public @interface MapperScan {
 	
 	String[] value() default "";
 }

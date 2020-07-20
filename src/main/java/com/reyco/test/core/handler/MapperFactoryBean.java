@@ -9,11 +9,11 @@ import org.springframework.beans.factory.FactoryBean;
 import com.reyco.test.core.dao.UserDao;
 
 @SuppressWarnings("all")
-public class MyMapperFactoryBean implements FactoryBean{
+public class MapperFactoryBean implements FactoryBean{
 	
 	private Class target;
 	
-	public MyMapperFactoryBean(Class target) {
+	public MapperFactoryBean(Class target) {
 		this.target = target;
 	}
 	

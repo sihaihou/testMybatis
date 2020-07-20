@@ -13,57 +13,53 @@ import java.util.List;
 import com.reyco.test.core.annotation.Select;
 import com.reyco.test.core.domain.User;
 
-public class ReycoInvocationHandler implements InvocationHandler{
-	
+public class ReycoInvocationHandler implements InvocationHandler {
+
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		String sql = method.getAnnotation(Select.class).value()[0];
-		System.out.println(sql);
-		List<User> users = doInvoke(sql,args[0]);
-		return users;
+		Object parames = args[0];
+		System.out.println("sql:"+sql);
+		System.out.println("parameters:"+parames);
+		return doInvoke(sql, parames);
 	}
-	
-	/**
-	 * 真正的执行者
-	 * @param sql
-	 * @return
-	 */
-	public List<User> doInvoke(String sql,Object args) {
+
+	private Object doInvoke(String sql, Object args) {
 		List<User> users = null;
-		Connection c=null;
-		PreparedStatement ps=null;
-		ResultSet rs=null;
+		Connection c = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 		try {
-			//加载驱动类
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			c=DriverManager.getConnection("jdbc:mysql://www.housihai.com:3306/test","root","Reyco123456.");
-			ps=(PreparedStatement) c.prepareStatement(sql);
-			ps.setObject(1, args);  
-			rs=ps.executeQuery();
+			c = DriverManager.getConnection("jdbc:mysql://182.61.13.51:3306/test", "root", "Reyco123456.");
+			ps = (PreparedStatement) c.prepareStatement(sql);
+			// 把id 大于2的记录都取出来
+			ps.setObject(1, args);
+			rs = ps.executeQuery();
 			User user = null;
-			while(rs.next()){
+			while (rs.next()) {
 				user = new User();
-				user.setId(rs.getInt(1));
-				user.setName(rs.getString(2));
-				user.setPassword(rs.getString(3));
+				user.setId(rs.getInt("id"));
+				user.setName(rs.getString("name"));
+				user.setPassword(rs.getString("password"));
 				if(users==null) {
 					users = new ArrayList<>();
 				}
 				users.add(user);
 			}
 		} catch (SQLException e) {
-				e.printStackTrace();		
+			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 			try {
-				if(rs!=null){
+				if(rs!=null) {
 					rs.close();
 				}
-				if(ps!=null){
+				if(ps!=null) {
 					ps.close();
 				}
-				if(c!=null){
+				if(c!=null) {
 					c.close();
 				}
 			} catch (SQLException e) {
