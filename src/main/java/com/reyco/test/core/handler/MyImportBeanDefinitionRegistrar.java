@@ -1,14 +1,17 @@
 package com.reyco.test.core.handler;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
+import org.springframework.core.type.filter.TypeFilter;
 
 import com.reyco.test.core.TestApplication;
 
@@ -17,21 +20,37 @@ public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegi
 	private static List<String> beanDefinitions =  new Vector<String>();
 	
 	public MyImportBeanDefinitionRegistrar() {
-		initBeanDefinitions();
+		//initBeanDefinitions();
 	}
 	
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-		for (String bean : beanDefinitions) {
+		//
+		Map<String, Object> annotationAttributes = importingClassMetadata.getAnnotationAttributes(MapperScan.class.getName());
+		String[] basePackages = (String[]) annotationAttributes.get("value");
+		
+		ClassPathMapperScanner reycoMapperScanner = new ClassPathMapperScanner(registry);
+		reycoMapperScanner.addIncludeFilter(new TypeFilter() {
+			
+			@Override
+			public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory)
+					throws IOException {
+				return true;
+			}
+		});
+		int scan = reycoMapperScanner.scan(basePackages);
+		
+		
+	/*	for (String bean : beanDefinitions) {
 			BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperFactoryBean.class);
 			BeanDefinition beanDefinition = builder.getBeanDefinition();
 			beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(bean);
 			registry.registerBeanDefinition(getBeanName(bean), beanDefinition);
-		}
+		}*/
 	}
 	
 	/**
-	 * 扫描指定包下的。class文件
+	 * 扫描指定包下的.class文件
 	 */
 	private void initBeanDefinitions(){
 		String[] packagePaths = TestApplication.class.getAnnotation(MapperScan.class).value();

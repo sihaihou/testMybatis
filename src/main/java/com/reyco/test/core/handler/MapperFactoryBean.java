@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.FactoryBean;
 
 import com.reyco.test.core.dao.UserDao;

@@ -15,12 +15,28 @@ import com.reyco.test.core.domain.User;
 
 public class ReycoInvocationHandler implements InvocationHandler {
 
+	static List<Connection> connections = new ArrayList<>(10);
+
+	static {
+		try {
+			for (int i = 0; i < 10; i++) {
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				Connection c = DriverManager.getConnection("jdbc:mysql://47.114.74.174:3306/test", "root","Reyco123456.");
+				connections.add(c);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		String sql = method.getAnnotation(Select.class).value()[0];
 		Object parames = args[0];
-		System.out.println("sql:"+sql);
-		System.out.println("parameters:"+parames);
+		System.out.println("SQL:" + sql);
+		System.out.println("parameters:" + parames);
 		return doInvoke(sql, parames);
 	}
 
@@ -30,9 +46,9 @@ public class ReycoInvocationHandler implements InvocationHandler {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			c = DriverManager.getConnection("jdbc:mysql://182.61.13.51:3306/test", "root", "Reyco123456.");
-			ps = (PreparedStatement) c.prepareStatement(sql);
+			c = connections.get(0);
+			connections.remove(0);
+			ps = c.prepareStatement(sql);
 			// 把id 大于2的记录都取出来
 			ps.setObject(1, args);
 			rs = ps.executeQuery();
@@ -42,25 +58,23 @@ public class ReycoInvocationHandler implements InvocationHandler {
 				user.setId(rs.getInt("id"));
 				user.setName(rs.getString("name"));
 				user.setPassword(rs.getString("password"));
-				if(users==null) {
+				if (users == null) {
 					users = new ArrayList<>();
 				}
 				users.add(user);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} finally {
 			try {
-				if(rs!=null) {
+				if (rs != null) {
 					rs.close();
 				}
-				if(ps!=null) {
+				if (ps != null) {
 					ps.close();
 				}
-				if(c!=null) {
-					c.close();
+				if (c != null) {
+					connections.add(c);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
