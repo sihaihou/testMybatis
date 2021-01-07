@@ -1,5 +1,11 @@
 package com.reyco.test.core;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.tomcat.util.http.LegacyCookieProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,6 +24,15 @@ import com.reyco.test.core.handler.MapperScan;
 @SpringBootApplication
 @MapperScan("com.reyco.test.core.dao")
 public class TestApplication {
+	
+	
+	@Bean
+	public SqlSessionFactory sqlSessionFactory() throws IOException {
+		InputStream inputstream = Resources.getResourceAsStream("mybatis.xml");
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputstream); 
+		return sqlSessionFactory;
+	}
+	
 	public static void main(String[] args) {
 		SpringApplication.run(TestApplication.class, args);
 	}

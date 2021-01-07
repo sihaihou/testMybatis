@@ -1,34 +1,42 @@
 package com.reyco.test.core.handler;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.FactoryBean;
 
-import com.reyco.test.core.dao.UserDao;
-
 @SuppressWarnings("all")
-public class MapperFactoryBean implements FactoryBean{
+public class MapperFactoryBean implements FactoryBean {
+
+	private Class MapperInferface;
 	
-	private Class target;
+	private SqlSession sqlSession;
+
+	public MapperFactoryBean(Class MapperInferface) {
+		this.MapperInferface = MapperInferface;
+	}
 	
-	public MapperFactoryBean(Class target) {
-		this.target = target;
+	public void setSqlSession(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSession = sqlSessionFactory.openSession();
 	}
 	
 	@Override
 	public Object getObject() throws Exception {
-		Class[] clazz = new Class[]{target};
-		Object proxyDao = Proxy.newProxyInstance(this.getClass().getClassLoader(),clazz,new ReycoInvocationHandler());
-		return proxyDao;
+		//自定义生成的代理对象
+		//Class[] clazz = new Class[] { MapperInferface };
+		//return (T)Proxy.newProxyInstance(this.getClass().getClassLoader(), clazz, new MapperProxy());
+		
+		//mybatis生成的代理对象
+		return sqlSession.getMapper(MapperInferface);
 	}
 
 	@Override
 	public Class getObjectType() {
-		return target;
+		return MapperInferface;
 	}
+
 	@Override
 	public boolean isSingleton() {
 		return true;

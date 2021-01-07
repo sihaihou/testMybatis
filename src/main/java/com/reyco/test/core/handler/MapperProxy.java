@@ -10,13 +10,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.reyco.test.core.annotation.Select;
 import com.reyco.test.core.domain.User;
 
-public class ReycoInvocationHandler implements InvocationHandler {
-
+public class MapperProxy implements InvocationHandler {
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	static List<Connection> connections = new ArrayList<>(10);
-
+	
 	static {
 		try {
 			for (int i = 0; i < 10; i++) {
@@ -30,13 +35,13 @@ public class ReycoInvocationHandler implements InvocationHandler {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		String sql = method.getAnnotation(Select.class).value()[0];
 		Object parames = args[0];
-		System.out.println("SQL:" + sql);
-		System.out.println("parameters:" + parames);
+		logger.debug("SQL:" + sql);
+		logger.debug("parameters:" + parames);
 		return doInvoke(sql, parames);
 	}
 

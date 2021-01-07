@@ -2,7 +2,8 @@ package com.reyco.test.core.dao;
 
 import java.util.List;
 
-import com.reyco.test.core.annotation.Select;
+import org.apache.ibatis.annotations.Select;
+
 import com.reyco.test.core.domain.User;
 
 public interface UserDao {

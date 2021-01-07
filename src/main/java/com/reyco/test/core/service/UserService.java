@@ -26,7 +26,7 @@ public class UserService{
 		return userDao.query(id);
 	}
 	
-	public List<User> queryOne(Integer id) {
+	public User queryOne(Integer id) {
 		return reycoDao.query(id);
 	}
 	

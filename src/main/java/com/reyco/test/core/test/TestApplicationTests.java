@@ -2,6 +2,8 @@ package com.reyco.test.core.test;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.reyco.test.core.TestApplication;
@@ -15,21 +17,17 @@ public class TestApplicationTests {
 	public static void main(String[] args) {
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(TestApplication.class);
 		UserService userService = (UserService)applicationContext.getBean(UserService.class);
-		List<User> users = userService.queryUser(3);
-		for (User user : users) {
-			System.out.println(user);
-		}
+		User user = userService.queryOne(3);
+		System.out.println(user);
 		
 		System.out.println("-----------------------------------------------------------------");
-		users = userService.queryOne(1);
-		for (User user : users) {
-			System.out.println(user);
-		}
+		user = userService.queryOne(1);
+		System.out.println(user);
 		
 		System.out.println("-----------------------------------------------------------------");
-		users = userService.queryRole(3);
-		for (User user : users) {
-			System.out.println(user);
+		List<User> users= userService.queryRole(3);
+		for (User u : users) {
+			System.out.println(u);
 		}
 	}
 }
