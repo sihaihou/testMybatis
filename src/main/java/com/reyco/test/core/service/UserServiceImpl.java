@@ -1,7 +1,9 @@
 package com.reyco.test.core.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.assertj.core.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +11,10 @@ import com.reyco.test.core.dao.ReycoDao;
 import com.reyco.test.core.dao.RoleDao;
 import com.reyco.test.core.dao.UserDao;
 import com.reyco.test.core.domain.User;
+import com.reyco.test.core.service.impl.UserService;
 
-@Service
-public class UserService{
+@Service("userService")
+public class UserServiceImpl implements UserService{
 
 	@Autowired
 	private UserDao userDao;
@@ -26,8 +29,8 @@ public class UserService{
 		return userDao.query(id);
 	}
 	
-	public User queryOne(Integer id) {
-		return reycoDao.query(id);
+	public User queryOne(Integer[] ids) {
+		return reycoDao.query(ids);
 	}
 	
 	public List<User> queryRole(Integer id) {

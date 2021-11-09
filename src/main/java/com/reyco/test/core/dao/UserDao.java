@@ -8,7 +8,7 @@ import com.reyco.test.core.domain.User;
 
 public interface UserDao {
 	
-	@Select("select * from user where id > ?")
+	@Select("select * from user where id > #{id}")
 	public List<User> query(Integer id);
 	
 }

@@ -1,0 +1,52 @@
+version: "3.3"
+services: 
+  nginx:
+    image: nginx
+    restart: always
+    container_name: nginx
+    ports:
+      - 80:80
+    volumes:
+      - /usr/local/task/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - /usr/local/task/nginx/log:/var/log/nginx
+      - /usr/local/task/nginx/html:/usr/share/nginx/html
+  redis:
+    image: redis:3.0.0
+    restart: always
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - /usr/local/task/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - /usr/local/task/redis/data:/data
+    entrypoint: redis-server /usr/local/etc/redis/redis.conf
+  mysql:
+    image: mysql:5.7
+    restart: always
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: iGch%A^JAI
+    ports:
+      - 3306:3306
+    volumes:
+      - /usr/local/task/mysql/initdb:/docker-entrypoint-initdb.d
+      - /usr/local/task/mysql/data:/var/lib/mysql
+      - /usr/local/task/mysql/conf:/etc/mysql/conf.d
+  task:
+    image: openjdk:8u151-alpine
+    restart: always
+    container_name: app
+    ports:
+      - 8099:8099
+    volumes:
+      - /usr/local/task/app/task-0.0.1-SNAPSHOT.jar:/usr/local/task-0.0.1-SNAPSHOT.jar
+      - /usr/local/task/app/logs:/mnt/local/task/app/logs
+    entrypoint: java -jar -Xms512M -Xmx512M -XX:+UseG1GC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:/usr/local/task/app/logs/task-gc.log -Dspring.profiles.active=test /usr/local/task-0.0.1-SNAPSHOT.jar
+      
+      
+      
+      
+          
+      
+      
+      

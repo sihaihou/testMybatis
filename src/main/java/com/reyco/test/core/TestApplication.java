@@ -25,17 +25,17 @@ import com.reyco.test.core.handler.MapperScan;
 @MapperScan("com.reyco.test.core.dao")
 public class TestApplication {
 	
+	public static void main(String[] args) {
+		SpringApplication.run(TestApplication.class, args);
+	}
 	
 	@Bean
 	public SqlSessionFactory sqlSessionFactory() throws IOException {
 		InputStream inputstream = Resources.getResourceAsStream("mybatis.xml");
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputstream); 
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputstream);
 		return sqlSessionFactory;
 	}
 	
-	public static void main(String[] args) {
-		SpringApplication.run(TestApplication.class, args);
-	}
 	@Bean
 	public CorsFilter corsFilter() {
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
