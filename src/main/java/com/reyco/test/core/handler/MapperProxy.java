@@ -26,7 +26,7 @@ public class MapperProxy implements InvocationHandler {
 		try {
 			for (int i = 0; i < 10; i++) {
 				Class.forName("com.mysql.cj.jdbc.Driver");
-				Connection c = DriverManager.getConnection("jdbc:mysql://47.114.74.174:3306/test", "root","Reyco123456.");
+				Connection c = DriverManager.getConnection("jdbc:mysql://47.114.74.174:3306/test", "root","******");
 				connections.add(c);
 			}
 		} catch (ClassNotFoundException e) {
